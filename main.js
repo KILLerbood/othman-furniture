@@ -2,6 +2,8 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // ===== بيانات المعرض (غيّرها ببياناتك) =====
 const CONFIG = {
@@ -346,6 +348,7 @@ const parts = { frame: [], springs: [], foam: [], cover: [], planks: [], logs: [
 let woodMat, fabricMat, accentMat, sofa, saw, plaque, dust, room, roomMats = [], shadowCatcher, lampLight;
 const woodTex = {}; const fabricTex = {}; const fabricNrm = {};
 let seatCushions = [], pressAnim = { v: 0 }, contactShadow, keyLight, home = null;
+const refs = {}; // مراجع للخامات اللي بتتبدل بالخامات الحقيقية بعد التحميل
 let userRot = 0, userVel = 0, lastDrag = -10;
 // جودة ذكية: لو الفريمات قلّت بنقلل الدقة شوية شوية، ولو الجهاز مرتاح بنرجّعها
 const quality = { dpr: MAX_DPR, frames: 0, elapsed: 0, cooldown: 0 };
@@ -623,10 +626,10 @@ function buildRoom() {
   room = new THREE.Group(); scene.add(room);
   const mk = (opts) => { const m = new THREE.MeshStandardMaterial({ transparent: true, ...opts }); roomMats.push(m); return m; };
   const floor = addMesh(new THREE.PlaneGeometry(34, 14), mk({ map: makeTex(parquetCanvas(WOODS.oak), 4), roughness: 0.55 }), room);
-  floor.material.map.repeat.set(9.7, 4); floor.position.x = 7;
+  floor.material.map.repeat.set(9.7, 4); floor.position.x = 7; refs.floor = floor;
   floor.rotation.x = -Math.PI / 2; floor.castShadow = false;
   const wall = addMesh(new THREE.PlaneGeometry(34, 6), mk({ color: 0xcdb79c, roughness: 0.95 }), room);
-  wall.position.set(7, 3, -1.6); wall.castShadow = false;
+  wall.position.set(7, 3, -1.6); wall.castShadow = false; refs.wall = wall;
   // حيطة شرايح خشب ورا الكنبة
   const slatMat = mk({ map: makeTex(woodCanvas({ base: '#5a3a22', dark: '#311c0e', light: '#7a5434', style: 'fine' }, 512, 128, 8), 1), roughness: 0.6 });
   for (let i = 0; i < 26; i++) {
@@ -649,6 +652,7 @@ function buildRoom() {
   const stem = addMesh(new THREE.CylinderGeometry(0.03, 0.05, 0.48, 12), tableWood, room); stem.position.set(-1.75, 0.25, -0.2);
   const vase = addMesh(new THREE.SphereGeometry(0.08, 24, 16), mk({ color: 0xb0603a, roughness: 0.4 }), room);
   vase.scale.set(1, 1.5, 1); vase.position.set(-1.75, 0.63, -0.2);
+  refs.sideTable = [top, stem, vase];
   room.visible = false;
 }
 
@@ -782,6 +786,7 @@ function buildHome() {
   decorItems.push(shelf);
   const pouf = add(pillowGeo(0.46, 0.38, 0.46, { rad: 0.18, puff: 0.15, seed: 70 }), fabricMat, dx - 0.55, 0.2, -0.45); decorItems.push(pouf);
   const pendant = new THREE.Group(); pendant.position.set(dx, 2.3, -0.7); g.add(pendant);
+  Object.assign(refs, { drape, mattressMat, duvetMat, inner, mahog, lacquer, pouf, pendant, plant, homeGroup: g });
   addMesh(new THREE.CylinderGeometry(0.004, 0.004, 1.2, 4), brass, pendant).position.y = 0.6;
   addMesh(new THREE.SphereGeometry(0.2, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshStandardMaterial({ color: 0xc9a36a, metalness: 0.9, roughness: 0.35, side: THREE.DoubleSide }), pendant);
   addMesh(new THREE.SphereGeometry(0.06, 16, 12), new THREE.MeshBasicMaterial({ color: 0xffe2b0 }), pendant).position.y = -0.05;
@@ -869,6 +874,125 @@ function updateHome(time) {
   });
 }
 
+// ===== خامات وموديلات حقيقية (متصوّرة من الحقيقة، Poly Haven CC0) =====
+// بتتحمّل بعد ما الصفحة تفتح، ولحد ما توصل الكنبة بتفضل بالخامات المرسومة بالكود
+const SFX = IS_MOBILE ? '_m' : '';
+const REAL_FABRIC = {
+  velvet: { tex: 'velour_velvet', repeat: 2.2, nrm: 0.8 },
+  linen: { tex: 'rough_linen', repeat: 2.2, nrm: 1 },
+  leather: { tex: 'leather_white', repeat: 1.6, nrm: 0.9 },
+  faux: { tex: 'fabric_leather_02', repeat: 2, nrm: 0.7 },
+  chenille: { tex: 'caban', repeat: 2.4, nrm: 1.1 },
+};
+const REAL_WOOD = { beech: 'ash_veneer', mahogany: 'sapele_veneer', oak: 'oak_veneer_01', pine: 'coated_pine' };
+const fabricRough = {}; const woodNrm = {}; const woodRough = {};
+let realReady = false;
+
+const texLoader = new THREE.TextureLoader();
+function loadTex(file, repeat = 1, srgb = false) {
+  return new Promise((res) => texLoader.load(`assets/tex/${file}${SFX}.jpg`, (t) => {
+    if (srgb) t.colorSpace = THREE.SRGBColorSpace;
+    t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(repeat, repeat);
+    t.anisotropy = Math.min(IS_MOBILE ? 4 : 8, renderer.capabilities.getMaxAnisotropy());
+    res(t);
+  }, undefined, () => res(null)));
+}
+const pbr = async (name, repeat, grey = false) => {
+  const [map, normalMap, roughnessMap] = await Promise.all([loadTex(`${name}_${grey ? 'grey' : 'diff'}`, repeat, true), loadTex(`${name}_nor`, repeat), loadTex(`${name}_rough`, repeat)]);
+  return { map, normalMap, roughnessMap };
+};
+const setRepeat = (set, x, y = x) => Object.values(set).forEach((t) => t && t.repeat.set(x, y));
+
+// على الموبايل بنصغّر تكسشرات الموديلات لـ ٥١٢ عشان ذاكرة الآيفون
+function shrinkTextures(root) {
+  if (!IS_MOBILE) return;
+  const done = new Set();
+  root.traverse((o) => {
+    if (!o.material) return;
+    [].concat(o.material).forEach((m) => ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'alphaMap'].forEach((k) => {
+      const t = m[k]; if (!t || done.has(t) || !t.image || t.image.width <= 512) return;
+      const c = document.createElement('canvas'); c.width = c.height = 512;
+      c.getContext('2d').drawImage(t.image, 0, 0, 512, 512); t.image = c; t.needsUpdate = true; done.add(t);
+    }));
+  });
+}
+const gltfLoader = new GLTFLoader();
+function loadModel(name) {
+  return new Promise((res) => gltfLoader.load(`assets/models/${name}/${name}.gltf`, (g) => {
+    const s = g.scene; s.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+    shrinkTextures(s); res(s);
+  }, undefined, () => res(null)));
+}
+// بيحط الموديل في نص المكان، وقاعدته على الأرض، وبيظبط مقاسه لو طلبنا ارتفاع معيّن
+function placeModel(model, parent, { x = 0, y = 0, z = 0, rotY = 0, height = 0 } = {}) {
+  const box = new THREE.Box3().setFromObject(model); const size = box.getSize(new THREE.Vector3());
+  if (height) model.scale.setScalar(height / size.y);
+  box.setFromObject(model); const c = box.getCenter(new THREE.Vector3());
+  model.position.x += x - c.x; model.position.z += z - c.z; model.position.y += y - box.min.y;
+  const pivot = new THREE.Group(); pivot.add(model); parent.add(pivot);
+  if (rotY) { pivot.position.set(x, 0, z); model.position.x -= x; model.position.z -= z; pivot.rotation.y = rotY; }
+  return pivot;
+}
+const swapContent = (group, model) => { if (!group || !model) return; group.clear(); group.add(model); };
+
+async function loadReal() {
+  // إضاءة HDRI من استوديو تصوير حقيقي: الانعكاسات والظلال بتبقى زي الصورة
+  new RGBELoader().load('assets/hdri/studio_1k.hdr', (hdr) => {
+    hdr.mapping = THREE.EquirectangularReflectionMapping;
+    const pm = new THREE.PMREMGenerator(renderer);
+    scene.environment = pm.fromEquirectangular(hdr).texture; hdr.dispose(); pm.dispose();
+    scene.environmentRotation = new THREE.Euler(0, 1.2, 0);
+  });
+  // القماش
+  await Promise.all(Object.entries(REAL_FABRIC).map(async ([k, f]) => {
+    const set = await pbr(f.tex, f.repeat, true); if (!set.map) return;
+    fabricTex[k] = set.map; fabricNrm[k] = set.normalMap; fabricRough[k] = set.roughnessMap;
+    FABRICS[k].nrmReal = f.nrm;
+    const card = document.querySelector(`[data-tex="${k}"]`);
+    if (card) card.style.backgroundImage = `url(assets/tex/${f.tex}_diff_m.jpg)`;
+  }));
+  realReady = true; applyFabric(true);
+  // الخشب
+  await Promise.all(Object.entries(REAL_WOOD).map(async ([k, name]) => {
+    const set = await pbr(name, 1); if (!set.map) return;
+    woodTex[k] = set.map; woodNrm[k] = set.normalMap; woodRough[k] = set.roughnessMap;
+    const sw = document.querySelector(`[data-swatch="${k}"]`); if (sw) sw.style.backgroundImage = `url(assets/tex/${name}_diff_m.jpg)`;
+  }));
+  woodMat.color.set(0xffffff); woodMat.roughness = 1; applyWood();
+  // الأرضية والحيطة
+  const floor = await pbr('herringbone_parquet', 1); setRepeat(floor, 17, 7);
+  Object.assign(refs.floor.material, floor, { roughness: 1 }); refs.floor.material.needsUpdate = true;
+  const wall = await pbr('beige_wall_001', 1); setRepeat(wall, 10, 1.8);
+  Object.assign(refs.wall.material, wall, { roughness: 1, color: new THREE.Color(0xfff4e8) }); refs.wall.material.needsUpdate = true;
+  // الستارة والسرير والدواليب
+  const velvet = await pbr('velour_velvet', 3, true);
+  if (refs.drape) { Object.assign(refs.drape, velvet, { roughness: 1 }); refs.drape.needsUpdate = true; }
+  const quilt = await pbr('quatrefoil_jacquard_fabric', 2.5, true);
+  if (refs.mattressMat) { Object.assign(refs.mattressMat, quilt, { roughness: 1 }); refs.mattressMat.needsUpdate = true; }
+  const waffle = await pbr('waffle_pique_cotton', 3, true);
+  if (refs.duvetMat) { Object.assign(refs.duvetMat, waffle, { roughness: 1 }); refs.duvetMat.needsUpdate = true; }
+  const walnut = await pbr('walnut_veneer', 1);
+  [refs.inner, refs.mahog].forEach((m) => { if (m) { Object.assign(m, walnut, { roughness: 1, color: new THREE.Color(0xffffff) }); m.needsUpdate = true; } });
+  // موديلات متصوّرة من الحقيقة
+  const [table, side, vase, plant, lamp, ottoman, chair] = await Promise.all(['modern_coffee_table_01', 'side_table_01', 'ceramic_vase_02', 'potted_plant_02', 'modern_ceiling_lamp_01', 'Ottoman_01', 'modern_arm_chair_01'].map(loadModel));
+  if (table) placeModel(table, room, { x: 0, z: 1.05, height: 0.42 });
+  if (side) { refs.sideTable.forEach((m) => { m.visible = false; m.scale.setScalar(0.001); }); placeModel(side, room, { x: -1.6, z: -0.25, height: 0.55 }); }
+  if (vase && side) placeModel(vase, room, { x: -1.6, y: 0.55, z: -0.25, height: 0.3 });
+  if (plant) { const plantB = plant.clone(); placeModel(plant, room, { x: 2.35, z: -1.15, height: 1.3 }); if (refs.plant) { refs.plant.clear(); placeModel(plantB, refs.plant, { height: 1.15 }); } }
+  if (lamp && refs.pendant) { refs.pendant.clear(); placeModel(lamp, refs.pendant, { y: -0.4, height: 0.75 }); }
+  if (ottoman && refs.pouf) {
+    const holder = new THREE.Group(); holder.position.set(refs.pouf.position.x, 0, refs.pouf.position.z);
+    holder.userData = { base: holder.position.clone(), i: refs.pouf.userData.i };
+    refs.pouf.parent.add(holder); placeModel(ottoman, holder, { height: 0.42 }); refs.pouf.visible = false; refs.pouf.scale.setScalar(0.0001);
+    const i = home.decor.indexOf(refs.pouf); if (i >= 0) home.decor[i] = holder; holder.visible = refs.pouf.visible;
+  }
+  if (chair && refs.homeGroup) {
+    const holder = new THREE.Group(); refs.homeGroup.add(holder);
+    placeModel(chair, holder, { height: 0.85, rotY: -0.5 }); holder.position.set(HOME_X.decor + 0.9, 0, -0.35);
+    holder.userData = { base: holder.position.clone(), i: home.decor.length }; holder.visible = false; home.decor.push(holder);
+  }
+}
+
 function buildDust() {
   const N = LOW_END ? 90 : IS_MOBILE ? 180 : 420;
   const pos = new Float32Array(N * 3); const seeds = new Float32Array(N);
@@ -881,16 +1005,16 @@ function buildDust() {
 }
 
 function applyWood() {
-  woodMat.map = woodTex[choice.wood]; woodMat.needsUpdate = true;
+  woodMat.map = woodTex[choice.wood]; woodMat.normalMap = woodNrm[choice.wood] || null; woodMat.roughnessMap = woodRough[choice.wood] || null; woodMat.needsUpdate = true;
 }
 function applyFabric() {
   const f = FABRICS[choice.material]; const tex = fabricTex[choice.material];
   const col = COLORS.find((c) => c.key === choice.color).hex;
   Object.assign(fabricMat, {
-    map: tex, normalMap: fabricNrm[choice.material], roughness: f.rough, sheen: f.sheen, sheenRoughness: f.sheenRough,
+    map: tex, normalMap: fabricNrm[choice.material], roughnessMap: fabricRough[choice.material] || null, roughness: realReady ? Math.min(1, f.rough + 0.15) : f.rough, sheen: f.sheen, sheenRoughness: f.sheenRough,
     clearcoat: f.clearcoat, clearcoatRoughness: f.ccRough,
   });
-  fabricMat.normalScale.setScalar(0.25 + f.bump * 0.3);
+  fabricMat.normalScale.setScalar(realReady ? (f.nrmReal || 1) : 0.25 + f.bump * 0.3);
   // اللون بيتغير بنعومة بدل ما ينط
   const to = new THREE.Color(col);
   const sheenTo = to.clone().lerp(new THREE.Color(0xffffff), 0.35);
@@ -1312,7 +1436,10 @@ async function boot() {
 
   if (!webgl) return;
   // قطع البيت (ستاير، دولاب، سرير، ديكور) بتتبني بعد ما الصفحة تفتح عشان التحميل يفضل سريع
-  setTimeout(() => { try { buildHome(); } catch (err) { console.warn(err); } }, 60);
+  setTimeout(() => {
+    try { buildHome(); } catch (err) { console.warn(err); }
+    loadReal().catch((err) => console.warn('الخامات الحقيقية ما اتحمّلتش، كمّلنا بالمرسومة', err));
+  }, 60);
   const damp = REDUCED ? 1 : 0;
   gsap.ticker.add(() => {
     const dt = Math.min(clock.getDelta(), 0.1);
