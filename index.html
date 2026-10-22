@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>عثمان للأثاث | شوف كنبتك بتتصنع قدامك</title>
+  <meta name="description" content="عثمان للأثاث: كنب مصري مصنوع بإيدين أسطوات، من اختيار الخشب لحد آخر غرزة. اختار الخشب والخامة واللون وشوف كنبتك بتتبني قدامك.">
+  <meta name="theme-color" content="#1a110b">
+  <!-- الموقع غامق أصلاً: كده سامسونج إنترنت ما يقلبش الألوان في الوضع الليلي -->
+  <meta name="color-scheme" content="dark">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+
+  <!-- اللودر -->
+  <div class="preloader" id="preloader" aria-live="polite">
+    <div class="preloader__inner">
+      <div class="preloader__logo">عثمان للأثاث</div>
+      <div class="preloader__bar"><span id="preloaderBar"></span></div>
+      <div class="preloader__txt"><span id="preloaderPct">٠</span>٪ · بنجهّز الورشة</div>
+    </div>
+  </div>
+
+  <!-- مشهد الـ 3D ثابت ورا المحتوى -->
+  <canvas id="scene" aria-hidden="true"></canvas>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <!-- الكيرسر -->
+  <div class="cursor" aria-hidden="true"><span class="cursor__dot"></span><span class="cursor__ring"></span></div>
+
+  <!-- الهيدر -->
+  <header class="nav">
+    <a href="#hero" class="nav__logo" data-scroll-to="#hero">عثمان للأثاث</a>
+    <div class="nav__chapter" aria-hidden="true">
+      <span class="nav__num" id="chapterNum">٠١</span>
+      <span class="nav__name" id="chapterName">البداية</span>
+    </div>
+    <a href="#contact" class="btn btn--small magnetic" data-scroll-to="#contact">اطلب دلوقتي</a>
+    <div class="nav__progress"><span id="progressBar"></span></div>
+  </header>
+
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+      <main>
+
+        <!-- ١. البداية -->
+        <section class="sec hero" id="hero" data-chapter="البداية">
+          <h1 class="sr-only">عثمان للأثاث</h1>
+          <div class="hero__content">
+            <p class="eyebrow" data-reveal>ورشة ومعرض أثاث وديكور مصري</p>
+            <p class="hero__tagline split">من الخشب إلى الراحة… شوف كنبتك بتتصنع قدامك</p>
+            <div class="hero__actions" data-reveal>
+              <a href="#forest" class="btn magnetic" data-scroll-to="#forest">ابدأ الرحلة</a>
+              <a href="#contact" class="btn btn--ghost magnetic" data-scroll-to="#contact">كلّمنا على طول</a>
+            </div>
+          </div>
+          <div class="scroll-hint" aria-hidden="true"><span></span>انزل لتحت</div>
+        </section>
+
+        <!-- ٢. الخشب: جمع الخشب -->
+        <section class="sec" id="forest" data-chapter="الخشب">
+          <div class="panel">
+            <p class="eyebrow" data-reveal>الفصل الأول · الخشب</p>
+            <h2 class="split">كل كنبة حلوة بتبدأ من شجرة</h2>
+            <p data-reveal>قبل ما نفكر في القماش أو اللون، بنبدأ من الأساس: <strong>الخشب</strong>. الخشب هو العضم بتاع الكنبة، ولو العضم ضعيف مفيش قماش في الدنيا هيداري.</p>
+            <p data-reveal>بنجيب الكتل الخشب من مصادر موثوقة: زان روماني، أرو أمريكاني، ماهوجني أفريقي وسويد شمال أوروبا. وبنفرز كل كتلة بعينينا قبل ما تدخل الورشة، فلو فيها شرخ أو سوس أو عقدة ضعيفة بترجع مكانها.</p>
+            <ul class="stats" data-reveal>
+              <li><b>٣</b><span>مراحل فرز للخشب</span></li>
+              <li><b>٤</b><span>أنواع خشب نختار منها</span></li>
+              <li><b>٠</b><span>خشب مضغوط في الهيكل</span></li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- ٢ب. التقطيع والتجفيف -->
+        <section class="sec sec--tall" id="cutting" data-chapter="الخشب">
+          <div class="panel">
+            <p class="eyebrow" data-reveal>التقطيع والتجفيف</p>
+            <h2 class="split">من كتلة خشب لألواح متظبطة بالمللي</h2>
+            <p data-reveal>الكتلة بتدخل على المنشار وتتقطع ألواح بالسُمك اللي محتاجينه. بعد كده الألواح بتترصّ فوق بعض وبينها <strong>فواصل خشب صغيرة</strong> عشان الهوا يعدّي من كل ناحية.</p>
+            <p data-reveal>وبعدها الخشب بيدخل <strong>أفران التجفيف</strong> لحد ما الرطوبة اللي جواه تنزل لحوالي ١٠٪. ده السر اللي بيخلي الهيكل ما يتقوّسش ولا يطقطق بعد سنة، ولا يتشقق مع حر الصيف.</p>
+            <ol class="mini-steps" data-reveal>
+              <li><b>التقطيع</b><span>ألواح بسُمك ثابت</span></li>
+              <li><b>الرصّ</b><span>فواصل للتهوية</span></li>
+              <li><b>التجفيف</b><span>رطوبة حوالي ١٠٪</span></li>
+            </ol>
+          </div>
+        </section>
+
+        <!-- ٢ج. أنواع الخشب -->
+        <section class="sec sec--tall" id="woods" data-chapter="الخشب">
+          <div class="panel panel--wide">
+            <p class="eyebrow" data-reveal>اختار نوع الخشب</p>
+            <h2 class="split">كل خشب وله شخصية</h2>
+            <p data-reveal>دوس على أي نوع وشوف الألواح بتتغير قدامك. الخشب اللي هتختاره هو اللي هنبني بيه هيكل كنبتك ورجليها.</p>
+            <div class="wood-grid" role="radiogroup" aria-label="اختار نوع الخشب" data-reveal>
+              <button class="wood-card" data-wood="beech" role="radio" aria-checked="true">
+                <span class="wood-card__swatch" data-swatch="beech"></span>
+                <span class="wood-card__name">خشب الزان</span>
+                <span class="wood-card__origin">زان روماني</span>
+                <span class="wood-card__meter" aria-label="القوة ٥ من ٥"><i style="--v:5"></i></span>
+                <span class="wood-card__txt"><b>شكله:</b> فاتح مايل للوردي وعروقه ناعمة.</span>
+                <span class="wood-card__txt"><b>ليه بنستخدمه:</b> أقوى وأشهر خشب للكنب في مصر، بيمسك المسمار والغرا كويس وبيشيل الوزن من غير ما يتعب.</span>
+              </button>
+              <button class="wood-card" data-wood="mahogany" role="radio" aria-checked="false">
+                <span class="wood-card__swatch" data-swatch="mahogany"></span>
+                <span class="wood-card__name">خشب الماهوجني</span>
+                <span class="wood-card__origin">ماهوجني أفريقي</span>
+                <span class="wood-card__meter" aria-label="القوة ٤ من ٥"><i style="--v:4"></i></span>
+                <span class="wood-card__txt"><b>شكله:</b> أحمر بني غامق، فخم وبيلمع مع الدهان.</span>
+                <span class="wood-card__txt"><b>ليه بنستخدمه:</b> مقاوم للرطوبة والسوس، ومثالي للكنب الكلاسيك والرجول المحفورة.</span>
+              </button>
+              <button class="wood-card" data-wood="oak" role="radio" aria-checked="false">
+                <span class="wood-card__swatch" data-swatch="oak"></span>
+                <span class="wood-card__name">خشب الأرو</span>
+                <span class="wood-card__origin">أرو أمريكاني</span>
+                <span class="wood-card__meter" aria-label="القوة ٥ من ٥"><i style="--v:5"></i></span>
+                <span class="wood-card__txt"><b>شكله:</b> دهبي وعروقه واضحة وجميلة.</span>
+                <span class="wood-card__txt"><b>ليه بنستخدمه:</b> صلب جداً ويعيش عمر، وبيدي الكنبة شكل مودرن لما رجليها تبان.</span>
+              </button>
+              <button class="wood-card" data-wood="pine" role="radio" aria-checked="false">
+                <span class="wood-card__swatch" data-swatch="pine"></span>
+                <span class="wood-card__name">خشب السويد</span>
+                <span class="wood-card__origin">سويد شمال أوروبا</span>
+                <span class="wood-card__meter" aria-label="القوة ٣ من ٥"><i style="--v:3"></i></span>
+                <span class="wood-card__txt"><b>شكله:</b> فاتح مصفر وفيه عُقد طبيعية مميزة.</span>
+                <span class="wood-card__txt"><b>ليه بنستخدمه:</b> خفيف وسعره مناسب، بنستخدمه بعد المعالجة للكنب الاقتصادي وللأجزاء اللي مش شايلة حمل تقيل.</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ٣. تجميع الهيكل (مثبّت) -->
+        <section class="sec frame-sec" id="frame" data-chapter="تجميع الهيكل">
+          <div class="panel">
+            <p class="eyebrow">الفصل التاني · تجميع الهيكل</p>
+            <h2>الألواح بتتحول لهيكل</h2>
+            <p>الأسطى بيقطّع الألواح على المقاسات وبيعشّقها في بعض. كمّل نزول وشوف كل قطعة بتروح مكانها.</p>
+            <ol class="build-steps" id="buildSteps">
+              <li><span class="build-steps__n">١</span><div><b>القاعدة</b><small>أربع عوارض متعشقة بنظام النقر واللسان، وفي النص عوارض تقوية.</small></div></li>
+              <li><span class="build-steps__n">٢</span><div><b>الرجول</b><small>رجول مخروطة من نفس الخشب، متثبتة بمسامير قلاووظ.</small></div></li>
+              <li><span class="build-steps__n">٣</span><div><b>تركيب الهيكل</b><small>قوايم الضهر والعارضة اللي فوق، دي اللي بتشيل ضهرك.</small></div></li>
+              <li><span class="build-steps__n">٤</span><div><b>المساند</b><small>مسند على كل جنب متربط بالضهر والقاعدة.</small></div></li>
+              <li><span class="build-steps__n">٥</span><div><b>التثبيت والتقوية</b><small>زوايا تقوية في كل ركن، غرا خشب ومسامير. هيكل مايتهزّش.</small></div></li>
+            </ol>
+          </div>
+          <div class="step-label" aria-hidden="true"><span id="stepLabel">القاعدة</span></div>
+        </section>
+
+        <!-- ٤. السوست -->
+        <section class="sec" id="springs" data-chapter="السوست والإسفنج">
+          <div class="panel">
+            <p class="eyebrow" data-reveal>الفصل التالت · السوست</p>
+            <h2 class="split">السوست: الراحة اللي مش باينة</h2>
+            <p data-reveal>بنشدّ على القاعدة <strong>سوست زجزاج</strong> من الصلب المقوّى، متوزعة بمسافات محسوبة عشان الوزن يتوزع بالتساوي ومفيش مكان "يهبط" مع الوقت.</p>
+            <p data-reveal>السوست بتتثبت بكلبسات معزولة عشان ماتعملش صوت، وفوقها طبقة خيش تقيلة تحمي الإسفنج.</p>
+          </div>
+        </section>
+
+        <!-- ٤ب. الإسفنج -->
+        <section class="sec sec--tall" id="foam" data-chapter="السوست والإسفنج">
+          <div class="panel">
+            <p class="eyebrow" data-reveal>الإسفنج</p>
+            <h2 class="split">اختار قعدتك: طرية ولا متماسكة؟</h2>
+            <p data-reveal>الإسفنج بيتقاس بالـ<strong>كثافة</strong>: كل ما الرقم يعلى، الإسفنج يبقى أتقل وأمتن ويعيش أكتر. إحنا بنحط كثافة أخف في الضهر والمساند، وأعلى في القعدة لأنها اللي بتشيل.</p>
+            <div class="density" role="radiogroup" aria-label="كثافة إسفنج القعدة" data-reveal>
+              <button class="density__opt" data-density="30" role="radio" aria-checked="false">
+                <b>كثافة ٣٠</b><span>طرية</span><small>قعدة ناعمة وبتغوص فيها، مناسبة للسهرة والريلاكس.</small>
+              </button>
+              <button class="density__opt" data-density="35" role="radio" aria-checked="true">
+                <b>كثافة ٣٥</b><span>متوازنة</span><small>الأكثر طلباً: مريحة ومش بتهبط مع الاستخدام اليومي.</small>
+              </button>
+              <button class="density__opt" data-density="40" role="radio" aria-checked="false">
+                <b>كثافة ٤٠</b><span>متماسكة</span><small>قعدة ثابتة وصحية للضهر، وبتعيش أطول عمر.</small>
+              </button>
+            </div>
+            <p class="note" data-reveal>وفوق الإسفنج طبقة <strong>فايبر سيليكون</strong> بتدي الكنبة شكلها المنفوخ ونعومتها من أول قعدة.</p>
+          </div>
+        </section>
+
+        <!-- ٤ج. التنجيد -->
+        <section class="sec" id="upholster" data-chapter="التنجيد">
+          <div class="panel">
+            <p class="eyebrow" data-reveal>الفصل الرابع · التنجيد</p>
+            <h2 class="split">وأخيراً… الكنبة بتلبس</h2>
+            <p data-reveal>المنجّد بيفصّل القماش على الهيكل حتة حتة، يشدّه ويدبّسه ويخيّط المخدات بإيده. كده الكنبة اتبنت، والدور عليك تختار هتلبس إيه.</p>
+          </div>
+        </section>
+
+        <!-- ٥. اختار الخامة (جاليري أفقي) -->
+        <section class="horiz-gallery-wrapper" id="materials" data-chapter="اختار الخامة">
+          <div class="horiz-gallery-strip">
+            <article class="mat-card mat-card--intro">
+              <p class="eyebrow">الفصل الخامس</p>
+              <h2>اختار الخامة</h2>
+              <p>خمس خامات، لكل واحدة إحساس ولمسة مختلفة. كمّل نزول عشان تشوفهم كلهم، ودوس "اختار الخامة دي" على اللي عجبتك.</p>
+              <span class="mat-card__arrow" aria-hidden="true">←</span>
+            </article>
+
+            <article class="mat-card" data-material="velvet">
+              <div class="mat-card__tex" data-tex="velvet"></div>
+              <div class="mat-card__body">
+                <span class="mat-card__num">٠١</span>
+                <h3>قطيفة</h3>
+                <p class="mat-card__sub">ناعمة ولامعة وفيها فخامة</p>
+                <ul>
+                  <li>ملمس دافي ومخملي</li>
+                  <li>لمعة بتتغير مع الإضاءة</li>
+                  <li>ألوانها غنية وعميقة</li>
+                </ul>
+                <p class="mat-card__fit"><b>تناسب:</b> الصالونات والريسبشن الكلاسيك.</p>
+                <button class="btn btn--small mat-pick" data-material="velvet">اختار الخامة دي</button>
+              </div>
+            </article>
+
+            <article class="mat-card" data-material="linen">
+              <div class="mat-card__tex" data-tex="linen"></div>
+              <div class="mat-card__body">
+                <span class="mat-card__num">٠٢</span>
+                <h3>كتان</h3>
+                <p class="mat-card__sub">طبيعي وهادي وبيتنفّس</p>
+                <ul>
+                  <li>نسيج طبيعي مطفي</li>
+                  <li>ساقع في الصيف</li>
+                  <li>شكله هادي ومريح للعين</li>
+                </ul>
+                <p class="mat-card__fit"><b>تناسب:</b> الستايل المودرن والبيوت الهادية.</p>
+                <button class="btn btn--small mat-pick" data-material="linen">اختار الخامة دي</button>
+              </div>
+            </article>
+
+            <article class="mat-card" data-material="leather">
+              <div class="mat-card__tex" data-tex="leather"></div>
+              <div class="mat-card__body">
+                <span class="mat-card__num">٠٣</span>
+                <h3>جلد طبيعي</h3>
+                <p class="mat-card__sub">بيعمّر عمر وبيحلو مع الوقت</p>
+                <ul>
+                  <li>متين جداً ويعيش سنين</li>
+                  <li>بيكتسب لمعة حلوة مع الاستخدام</li>
+                  <li>سهل في التنضيف</li>
+                </ul>
+                <p class="mat-card__fit"><b>تناسب:</b> المكاتب والليفينج الفخم.</p>
+                <button class="btn btn--small mat-pick" data-material="leather">اختار الخامة دي</button>
+              </div>
+            </article>
+
+            <article class="mat-card" data-material="faux">
+              <div class="mat-card__tex" data-tex="faux"></div>
+              <div class="mat-card__body">
+                <span class="mat-card__num">٠٤</span>
+                <h3>جلد صناعي</h3>
+                <p class="mat-card__sub">شكل الجلد بسعر أوفر</p>
+                <ul>
+                  <li>مقاوم للبقع والمية</li>
+                  <li>بيتمسح بفوطة مبلولة</li>
+                  <li>ألوان كتير تختار منها</li>
+                </ul>
+                <p class="mat-card__fit"><b>تناسب:</b> البيوت اللي فيها أطفال وحيوانات أليفة.</p>
+                <button class="btn btn--small mat-pick" data-material="faux">اختار الخامة دي</button>
+              </div>
+            </article>
+
+            <article class="mat-card" data-material="chenille">
+              <div class="mat-card__tex" data-tex="chenille"></div>
+              <div class="mat-card__body">
+                <span class="mat-card__num">٠٥</span>
+                <h3>شانيل</h3>
+                <p class="mat-card__sub">ناعم ومتين، حبيب العيلة</p>
+                <ul>
+                  <li>نسيج مضفّر ملمسه ناعم</li>
+                  <li>مقاوم للاحتكاك والوبر</li>
+                  <li>بيستحمل الاستخدام اليومي</li>
+                </ul>
+                <p class="mat-card__fit"><b>تناسب:</b> الليفينج والعيلة الكبيرة.</p>
+                <button class="btn btn--small mat-pick" data-material="chenille">اختار الخامة دي</button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- ٦. القماش واللون -->
+        <section class="sec sec--tall" id="fabric" data-chapter="القماش واللون">
+          <div class="panel">
+            <p class="eyebrow" data-reveal>الفصل السادس · القماش واللون</p>
+            <h2 class="split">لوّن كنبتك على مزاجك</h2>
+            <p data-reveal>اختار اللون وشوف الكنبة بتتغير على طول. <span class="hint-drag">اسحب الكنبة يمين وشمال عشان تلفّها وتشوفها من كل ناحية.</span></p>
+            <div class="chips" role="radiogroup" aria-label="الخامة" data-reveal>
+              <button class="chip" data-material="velvet">قطيفة</button>
+              <button class="chip" data-material="linen">كتان</button>
+              <button class="chip" data-material="leather">جلد طبيعي</button>
+              <button class="chip" data-material="faux">جلد صناعي</button>
+              <button class="chip" data-material="chenille">شانيل</button>
+            </div>
+            <div class="swatches" role="radiogroup" aria-label="اللون" id="swatches" data-reveal></div>
+            <p class="current-pick" data-reveal>اختيارك: <b data-sum="material"></b> · <b data-sum="color"></b></p>
+          </div>
+        </section>
+
+        <!-- ٧. الكنبة النهائية -->
+        <section class="sec sec--tall" id="final" data-chapter="الكنبة النهائية">
+          <div class="panel">
+            <p class="eyebrow" data-reveal>الفصل السابع · كنبتك جاهزة</p>
+            <h2 class="split">دي كنبتك… في بيتك</h2>
+            <p data-reveal>كل اختيار عملته اتحول لقطعة حقيقية. وده ملخص الكنبة اللي هنصنعهالك:</p>
+            <dl class="summary" data-reveal>
+              <div><dt>الخشب</dt><dd data-sum="wood"></dd></div>
+              <div><dt>كثافة القعدة</dt><dd data-sum="density"></dd></div>
+              <div><dt>الخامة</dt><dd data-sum="material"></dd></div>
+              <div><dt>اللون</dt><dd data-sum="color"></dd></div>
+            </dl>
+            <div class="hero__actions" data-reveal>
+              <a href="#contact" class="btn magnetic" data-scroll-to="#contact">اطلب الكنبة دي</a>
+              <a href="#woods" class="btn btn--ghost magnetic" data-scroll-to="#woods">غيّر الخشب</a>
+            </div>
+          </div>
+        </section>
+
+        <!-- ٨. البيت كله من عثمان -->
+        <section class="sec" id="home" data-chapter="البيت كله">
+          <div class="panel">
+            <p class="eyebrow" data-reveal>الجزء التاني · البيت كله</p>
+            <h2 class="split">وعثمان مش بس أنتريهات</h2>
+            <p data-reveal>نفس الأسطوات ونفس الضمير اللي عملوا كنبتك، بيعملوا <strong>الستاير والدواليب وأوض النوم والديكور</strong>. يعني بيتك كله يطلع من ورشة واحدة، بذوق واحد وجودة واحدة، ومن غير ما تلف على عشر محلات.</p>
+            <ol class="mini-steps" data-reveal>
+              <li><b>زيارة ومقاسات</b><span>بنيجي لحد بيتك ونقيس بنفسنا</span></li>
+              <li><b>تصميم 3D</b><span>بتشوف الأوضة قبل ما تتنفذ</span></li>
+              <li><b>تنفيذ وتركيب</b><span>من الورشة لحد ما نركّب ونمشي</span></li>
+            </ol>
+          </div>
+        </section>
+
+        <!-- ٩. الستاير -->
+        <section class="sec sec--tall" id="curtains" data-chapter="الستاير">
+          <div class="panel panel--wide">
+            <p class="eyebrow" data-reveal>الستاير والمفروشات</p>
+            <h2 class="split">ستارة متفصّلة على شباكك بالسنتي</h2>
+            <p data-reveal>الستارة الحلوة مش قماشة متعلقة. بنقيس الشباك والسقف بنفسنا، ونحسب <strong>الكسرات</strong> عشان القماش ينزل مليان ومتوزع، ونبطّن الستارة عشان تعيش وما تبهتش من الشمس.</p>
+            <ol class="process" data-reveal>
+              <li><b>المقاس</b><span>عرض الشباك وارتفاع السقف، وبنزوّد عرض للكسرات</span></li>
+              <li><b>القماش والبطانة</b><span>تختار من العينات في بيتك، ونبطّن ضد الشمس والبهتان</span></li>
+              <li><b>التفصيل</b><span>كسرات ويفي أو بانيه أو كسرة فرنساوي، وأطراف متخيطة دبل</span></li>
+              <li><b>التركيب</b><span>مجرى ألومنيوم في السقف أو كرنيشة خشب أو ستانلس، ولو حابب موتور بالريموت</span></li>
+            </ol>
+            <div class="opts" data-reveal>
+              <div class="opt"><b>بلاك أوت</b><i>بيقفل النور خالص</i><span><em>ميزته:</em> عازل للحرارة والنور، مثالي لأوضة النوم.</span><span><em>خد بالك:</em> أتقل في الوزن، فمحتاج مجرى قوي.</span></div>
+              <div class="opt"><b>شيفون وتُل</b><i>ستارة خفيفة</i><span><em>ميزته:</em> بيعدّي النور ويحافظ على الخصوصية بالنهار.</span><span><em>خد بالك:</em> بيتلبس مع ستارة تقيلة، مش لوحده.</span></div>
+              <div class="opt"><b>كتان</b><i>طبيعي وهادي</i><span><em>ميزته:</em> شكله مودرن ومطفي وبيتنفّس.</span><span><em>خد بالك:</em> بيتكرمش شوية، وده جزء من شكله.</span></div>
+              <div class="opt"><b>قطيفة</b><i>فخامة وتقل</i><span><em>ميزته:</em> بتنزل تقيلة ولمعتها غنية، للصالونات.</span><span><em>خد بالك:</em> محتاجة تنضيف بالبخار مش بالغسالة.</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ١٠. الدواليب -->
+        <section class="sec sec--tall" id="wardrobe" data-chapter="الدواليب">
+          <div class="panel panel--wide">
+            <p class="eyebrow" data-reveal>الدواليب والمطابخ</p>
+            <h2 class="split">دولاب بيتقفل بنعومة ويعيش عمر</h2>
+            <p data-reveal>الدولاب بيتحكم عليه من حاجتين: <strong>الخامة</strong> اللي اتعمل منها، و<strong>الإكسسوار</strong> اللي بيشيله. عشان كده بنقطّع على مكنة CNC بالمللي، ونقفل كل حرف بشريط PVC حراري عشان الرطوبة ما تدخلش، ونركّب مفصلات ومجاري ماتعملش صوت.</p>
+            <ol class="process" data-reveal>
+              <li><b>التصميم</b><span>بنقسّم الدولاب على هدومك: علّاقة، رفوف، أدراج وجزامة</span></li>
+              <li><b>التقطيع</b><span>تقطيع CNC بالمللي، فالأبواب بتقفل مستوية</span></li>
+              <li><b>الحرف</b><span>شريط PVC حراري على كل حرف، فمفيش انتفاخ من الرطوبة</span></li>
+              <li><b>الإكسسوار</b><span>مفصلات هيدروليك ومجاري سوفت كلوز تقفل لوحدها بهدوء</span></li>
+            </ol>
+            <div class="opts" data-reveal>
+              <div class="opt"><b>خشب طبيعي</b><i>زان أو أرو</i><span><em>ميزته:</em> أقوى حاجة، بيتدهن أويما أو استر ويعيش أجيال.</span><span><em>خد بالك:</em> أغلى وأتقل في الوزن.</span></div>
+              <div class="opt"><b>MDF</b><i>الأكثر طلباً</i><span><em>ميزته:</em> سطح ناعم بياخد دهان لاكيه أو هاي جلوس مظبوط.</span><span><em>خد بالك:</em> لازم يتقفل كويس من المية والرطوبة.</span></div>
+              <div class="opt"><b>كونتر</b><i>قشرة طبيعي</i><span><em>ميزته:</em> شكل الخشب الطبيعي بوزن وسعر أخف.</span><span><em>خد بالك:</em> القشرة محتاجة إيد شاطرة في التشطيب.</span></div>
+              <div class="opt"><b>هاي جلوس</b><i>تشطيب لامع</i><span><em>ميزته:</em> لمعة مودرن بتوسّع الأوضة وسهل في المسح.</span><span><em>خد بالك:</em> بيبيّن البصمات، فالمطفي أريح للعيلة.</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ١١. أوضة النوم -->
+        <section class="sec sec--tall" id="bed" data-chapter="أوض النوم">
+          <div class="panel panel--wide">
+            <p class="eyebrow" data-reveal>أوض النوم</p>
+            <h2 class="split">سرير تنام عليه وإنت مطمّن</h2>
+            <p data-reveal>السرير عندنا بيتعمل زي الكنبة بالظبط: <strong>هيكل خشب زان</strong> متعشق، و<strong>شرايح خشب مرنة</strong> تحت المرتبة بدل اللوح الخشب، عشان المرتبة تتهوّى وتشيلك صح. وضهر السرير بيتنجد بنفس خامات الأنتريه، فالأوضة كلها تبقى لايقة على بعضها.</p>
+            <ol class="process" data-reveal>
+              <li><b>الهيكل</b><span>زان متعشق بالنقر واللسان، ومفيش أي طقطقة</span></li>
+              <li><b>الشرايح</b><span>شرايح خشب مقوّسة بتتحرك مع جسمك وبتهوّي المرتبة</span></li>
+              <li><b>ضهر السرير</b><span>تنجيد كابتونيه بزراير أو خطوط طولية أو سادة</span></li>
+              <li><b>الأوضة كاملة</b><span>كومودينو وتسريحة وشوفونيرة ودولاب من نفس الخشب</span></li>
+            </ol>
+            <div class="opts" data-reveal>
+              <div class="opt"><b>سوست بوكت</b><i>سوست منفصلة</i><span><em>ميزته:</em> كل سوستة لوحدها، فحركة اللي جنبك ما توصلكش.</span><span><em>خد بالك:</em> أغلى من السوست العادية.</span></div>
+              <div class="opt"><b>مرتبة طبية</b><i>متماسكة</i><span><em>ميزته:</em> سطح ثابت بيريّح الضهر والفقرات.</span><span><em>خد بالك:</em> ناس كتير بتشوفها ناشفة في الأول.</span></div>
+              <div class="opt"><b>ميموري فوم</b><i>بتاخد شكل جسمك</i><span><em>ميزته:</em> بتوزع الضغط وبتريّح المفاصل.</span><span><em>خد بالك:</em> بتسخن شوية، فبنحط فوقها طبقة جل.</span></div>
+              <div class="opt"><b>لاتكس طبيعي</b><i>مرن ومنعش</i><span><em>ميزته:</em> بيتنفس ومضاد للحساسية ويعيش طويل.</span><span><em>خد بالك:</em> أتقل وأغلى نوع.</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ١٢. الديكور -->
+        <section class="sec sec--tall" id="decor" data-chapter="الديكور">
+          <div class="panel panel--wide">
+            <p class="eyebrow" data-reveal>الديكور واللمسة الأخيرة</p>
+            <h2 class="split">التفاصيل الصغيرة هي اللي بتعمل البيت</h2>
+            <p data-reveal>بعد الأنتريه والستاير والدولاب والسرير، بنقفل الأوضة بالحاجات اللي بتديها روح: <strong>ترابيزة وسط وترابيزات جانبية، مرايات، أرفف، أباجورات ونجف، وسجاد</strong>. كله بيتختار مع بعض عشان الألوان والخامات تكمّل بعض.</p>
+            <ol class="process" data-reveal>
+              <li><b>ترابيزات</b><span>وسط وجنب من نفس خشب الأنتريه أو رخام وستانلس</span></li>
+              <li><b>مرايات وأرفف</b><span>براويز خشب أو ستانلس دهبي، وأرفف معلقة على الحيطة</span></li>
+              <li><b>الإضاءة</b><span>أباجورة جنب الكنبة ونجفة في النص، بإضاءة دافية</span></li>
+              <li><b>بديل الحيطة</b><span>شرايح خشب أو ورق حائط أو بانوهات منجدة ورا السرير والتلفزيون</span></li>
+            </ol>
+            <div class="hero__actions" data-reveal>
+              <a href="#contact" class="btn magnetic" data-scroll-to="#contact">عايز أفرش بيتي من عثمان</a>
+            </div>
+          </div>
+        </section>
+
+        <!-- ١٣. تواصل معانا -->
+        <section class="sec contact" id="contact" data-chapter="تواصل معانا">
+          <div class="contact__grid">
+            <div class="contact__info">
+              <p class="eyebrow" data-reveal>الفصل الأخير</p>
+              <h2 class="split">تواصل معانا</h2>
+              <p data-reveal>ابعتلنا اختيارك، وواحد من فريقنا هيكلمك يأكّد المقاسات ويقولك السعر وميعاد التسليم. ولو حابب تشوف الخامات بإيدك، المعرض مفتوح لك.</p>
+              <a class="btn btn--whatsapp magnetic" id="waBtn" href="#" target="_blank" rel="noopener" data-reveal>
+                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3a.5.5 0 0 0 0-.4l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.2c0-.1-.2-.2-.4-.3Z"/></svg>
+                كلّمنا على واتساب
+              </a>
+              <ul class="contact__list" data-reveal>
+                <li><b>المعرض</b><a class="contact__map" data-map-link href="#" target="_blank" rel="noopener"><span id="addrText"></span> · افتح على الخريطة ↗</a></li>
+                <li><b>المواعيد</b><span id="hoursText"></span></li>
+                <li><b>الموبايل</b><span id="phoneText" dir="ltr"></span></li>
+              </ul>
+            </div>
+            <form class="order" id="orderForm" novalidate data-reveal>
+              <h3>اطلب من عثمان</h3>
+              <div class="order__pick">اختيار الكنبة: <b data-sum="wood"></b> · <b data-sum="material"></b> · <b data-sum="color"></b> · <b data-sum="density"></b></div>
+              <fieldset class="order__wants">
+                <legend>عايز إيه؟ (اختار كل اللي محتاجه)</legend>
+                <label><input type="checkbox" name="want" value="أنتريه / كنبة" checked><span>أنتريه / كنبة</span></label>
+                <label><input type="checkbox" name="want" value="ركنة"><span>ركنة</span></label>
+                <label><input type="checkbox" name="want" value="ستاير"><span>ستاير</span></label>
+                <label><input type="checkbox" name="want" value="دولاب"><span>دولاب</span></label>
+                <label><input type="checkbox" name="want" value="أوضة نوم"><span>أوضة نوم</span></label>
+                <label><input type="checkbox" name="want" value="ديكور"><span>ديكور</span></label>
+              </fieldset>
+              <label>الاسم
+                <input name="name" required autocomplete="name" placeholder="اكتب اسمك">
+              </label>
+              <label>رقم الموبايل
+                <input name="phone" required inputmode="tel" autocomplete="tel" placeholder="مثلاً 01xxxxxxxxx" dir="ltr">
+              </label>
+              <label>المحافظة
+                <select name="city">
+                  <option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option><option>دمياط</option>
+                  <option>الدقهلية</option><option>الشرقية</option><option>القليوبية</option><option>الغربية</option>
+                  <option>المنوفية</option><option>البحيرة</option><option>بورسعيد</option><option>الإسماعيلية</option>
+                  <option>السويس</option><option>محافظة تانية</option>
+                </select>
+              </label>
+              <label>المقاس أو أي ملاحظات
+                <textarea name="notes" rows="3" placeholder="مثلاً: كنبة ٣ أفراد عرض ٢٢٠ سم، وستارة لشباك عرضه ٢٠٠ سم"></textarea>
+              </label>
+              <button class="btn magnetic" type="submit">ابعت الطلب على واتساب</button>
+              <p class="order__msg" id="orderMsg" role="status"></p>
+            </form>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="footer__logo">عثمان للأثاث</div>
+        <p>من الخشب إلى الراحة · صناعة مصرية بإيدين أسطوات</p>
+        <div class="footer__map">
+          <iframe title="موقع معرض عثمان للأثاث على الخريطة" src="https://maps.google.com/maps?q=29.9457043,31.0506059&z=16&hl=ar&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+        </div>
+        <a class="btn btn--ghost btn--small footer__map-btn" data-map-link href="#" target="_blank" rel="noopener">📍 افتح موقعنا على جوجل ماب</a>
+        <p class="footer__copy">© ٢٠٢٦ عثمان للأثاث. كل الحقوق محفوظة.</p>
+        <p class="footer__credit" dir="ltr">Made by Magmafy</p>
+      </footer>
+    </div>
+  </div>
+
+  <!-- GSAP -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollSmoother.min.js"></script>
+  <script type="module" src="main.js"></script>
+</body>
+</html>
